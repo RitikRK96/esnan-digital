@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="p-4 border-t border-saffron-700">
             <div className="text-center text-saffron-200 text-xs">
               <p className="font-decorative text-lg mb-1">"Har Har Gange"</p>
-              <p>Preserving Nature Through Digital Devotion</p>
+              <p>Preserving Nature Through <br />Digital Devotion</p>
             </div>
           </div>
         </div>

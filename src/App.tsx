@@ -13,6 +13,10 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Blogs from './pages/Blogs';
 import BlogPost from './pages/BlogPost';
+import PrivacyPolicy from './pages/Policies/PrivacyPolicy';
+import RefundPolicy from './pages/Policies/RefundPolicy';
+import TermsAndConditions from './pages/Policies/TermsAndConditions';
+import BackToTopButton from './components/BackToTopButton';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,10 +39,15 @@ function App() {
                 <Route path="/blog/:id" element={<BlogPost />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/PrivacyPolicy" element={<PrivacyPolicy/>} />
+                <Route path="/RefundPolicy" element={<RefundPolicy/>} />
+                <Route path="/TermsAndConditions" element={<TermsAndConditions/>} />
               </Routes>
+              
             </main>
             
             <Footer />
+            <BackToTopButton/>
           </div>
         </Router>
       </CartProvider>

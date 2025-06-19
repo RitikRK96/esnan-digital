@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Waves, TreePine, Users, Droplets, ArrowRight, Sparkles } from 'lucide-react';
+import backgroundImage from '../IMG/image.jpg'; // ✅ Update path based on your file structure
 
 const Home: React.FC = () => {
   const stats = [
@@ -13,10 +14,15 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-saffron-600 via-spiritual-orange to-saffron-800 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
-        
+      <section className="relative overflow-hidden text-white">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        ></div>
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+
         <div className="relative px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
           <div className="mx-auto max-w-4xl text-center">
             <div className="flex justify-center mb-8">
@@ -24,16 +30,16 @@ const Home: React.FC = () => {
                 <Waves className="h-16 w-16 text-spiritual-blue animate-glow" />
               </div>
             </div>
-            
+
             <h1 className="text-4xl sm:text-6xl font-decorative font-bold mb-6 leading-tight">
               Experience Divinity from Anywhere with e-Snan
             </h1>
-            
+
             <p className="text-xl sm:text-2xl mb-8 text-saffron-100 leading-relaxed max-w-3xl mx-auto">
-              Join the sacred tradition of holy bathing while preserving our precious rivers. 
+              Join the sacred tradition of holy bathing while preserving our precious rivers.
               Connect with divine energy through technology and contribute to environmental conservation.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link
                 to="/book-e-snan"
@@ -42,7 +48,7 @@ const Home: React.FC = () => {
                 Book Your Divine e-Snan
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              
+
               <Link
                 to="/about"
                 className="inline-flex items-center px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-saffron-800 transition-all duration-200"
@@ -50,14 +56,14 @@ const Home: React.FC = () => {
                 Learn More
               </Link>
             </div>
-            
+
             <div className="text-center text-saffron-100">
-              <p className="text-sm mb-2">🌿 Eco-Friendly • 🙏 Spiritually Pure • 📱 Digitally Accessible</p>
+              <p className="text-sm mb-2">
+                🌿 Eco-Friendly • 🙏 Spiritually Pure • 📱 Digitally Accessible
+              </p>
             </div>
           </div>
         </div>
-        
-        
       </section>
 
       {/* Stats Section */}
@@ -71,7 +77,7 @@ const Home: React.FC = () => {
               Through digital devotion, we're making a real difference in preserving our sacred rivers and environment
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center group">
@@ -96,7 +102,7 @@ const Home: React.FC = () => {
               Why Choose e-Snan?
             </h2>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="flex justify-center mb-4">
@@ -105,9 +111,11 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Environmental Protection</h3>
-              <p className="text-gray-600">Reduce water pollution and overcrowding at sacred sites while maintaining spiritual connection.</p>
+              <p className="text-gray-600">
+                Reduce water pollution and overcrowding at sacred sites while maintaining spiritual connection.
+              </p>
             </div>
-            
+
             <div className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="flex justify-center mb-4">
                 <div className="p-4 bg-saffron-100 rounded-full">
@@ -115,9 +123,11 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Authentic Rituals</h3>
-              <p className="text-gray-600">Traditional vedic ceremonies performed by qualified priests at sacred locations on your behalf.</p>
+              <p className="text-gray-600">
+                Traditional vedic ceremonies performed by qualified priests at sacred locations on your behalf.
+              </p>
             </div>
-            
+
             <div className="text-center p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="flex justify-center mb-4">
                 <div className="p-4 bg-green-100 rounded-full">
@@ -125,7 +135,9 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Accessible Devotion</h3>
-              <p className="text-gray-600">Connect with divine energy from anywhere, making spirituality accessible to all devotees.</p>
+              <p className="text-gray-600">
+                Connect with divine energy from anywhere, making spirituality accessible to all devotees.
+              </p>
             </div>
           </div>
         </div>
