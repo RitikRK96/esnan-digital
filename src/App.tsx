@@ -7,10 +7,12 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import BookeSnan from './pages/BookeSnan';
-import SnakHistory from './pages/SnakeHistory';
+import SnakHistory from './pages/SnanHistory';
 import OrderProducts from './pages/OrderProducts';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Profile from './pages/Profile';
+
 import Blogs from './pages/Blogs';
 import BlogPost from './pages/BlogPost';
 import PrivacyPolicy from './pages/Policies/PrivacyPolicy';
@@ -28,7 +30,7 @@ function App() {
           <div className="min-h-screen bg-gradient-to-br from-spiritual-cream to-saffron-50 font-serif">
             <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-            
+
             <main className="lg:ml-64 transition-all duration-300">
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -39,15 +41,19 @@ function App() {
                 <Route path="/blog/:id" element={<BlogPost />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/PrivacyPolicy" element={<PrivacyPolicy/>} />
-                <Route path="/RefundPolicy" element={<RefundPolicy/>} />
-                <Route path="/TermsAndConditions" element={<TermsAndConditions/>} />
+                <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
+                <Route path="/RefundPolicy" element={<RefundPolicy />} />
+                <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
+                <Route path="/profile" element={<Profile />} />
+
+
+
               </Routes>
-              
+
             </main>
-            
+
             <Footer />
-            <BackToTopButton/>
+            <BackToTopButton />
           </div>
         </Router>
       </CartProvider>

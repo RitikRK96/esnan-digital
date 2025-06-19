@@ -174,13 +174,13 @@ const OrderProducts: React.FC = () => {
 
                       <button
                         onClick={() => handleAddToCart(product)}
-                        disabled={isInCart(product.id)}
+                        disabled={isInCart(product.id)||!user}
                         className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 ${isInCart(product.id)
                           ? 'bg-green-100 text-green-700 cursor-not-allowed'
                           : 'bg-saffron-600 text-white hover:bg-saffron-700 shadow-lg hover:shadow-xl'
                           }`}
                       >
-                        {isInCart(product.id) ? 'Added ✓' : 'Add to Cart'}
+                        {isInCart(product.id) ? 'Added ✓' : (!user ? 'Login First' : 'Add to Cart')}
                       </button>
                     </div>
                   </div>

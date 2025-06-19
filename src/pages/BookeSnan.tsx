@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Camera, Droplets, Plus, ArrowRight, Upload, X, Image } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
+import {storage} from '../firebase'
+
+
 
 const BookeSnan: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState('');
@@ -92,7 +96,10 @@ const BookeSnan: React.FC = () => {
       if (addPhoto) totalAmount += 100;
       if (addHolyWater) totalAmount += 300;
 
-
+      
+      const photoRef = ref(storage, `snan_photos/${user.id}_${Date.now()}`);
+      const snapshot = await uploadBytes(photoRef, photo);
+      const downloadURL = await getDownloadURL(snapshot.ref);
 
       // === 2. Submit booking to backend ===
       const bookingData = {
@@ -100,13 +107,14 @@ const BookeSnan: React.FC = () => {
         uid: user.id,
         cityId: selectedCity,
         cityName: selectedCityData?.name,
-        photoUrl: "url",
+        photoUrl: downloadURL,
         addPhoto,
         addHolyWater,
         totalAmount,
         email: user.email,
         name: user.name,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        snanPhoto:"unavailable"
       };
 
       const bookingRes = await fetch(`https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/snan/${user.id}/add`, {

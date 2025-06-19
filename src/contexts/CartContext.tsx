@@ -17,6 +17,7 @@ interface CartContextType {
   removeFromCart: (productId: string) => Promise<void>;
   updateQuantity: (productId: string, quantity: number) => Promise<void>;
   clearCart: () => void;
+  clearCartLocal: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
 }
@@ -40,22 +41,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const API_BASE_URL = "https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api";
   const [items, setItems] = useState<CartItem[]>([]);
 
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchCart = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/cart/${UID}`);
-      const data = response.data || {};
-      const fetchedItems = Object.values(data) as CartItem[];
-      setItems(fetchedItems);
-    } catch (error) {
-      console.error("Failed to fetch cart:", error);
-    }
-  };
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/cart/${UID}`);
+        const data = response.data || {};
+        const fetchedItems = Object.values(data) as CartItem[];
+        setItems(fetchedItems);
+      } catch (error) {
+        console.error("Failed to fetch cart:", error);
+      }
+    };
 
-  if (UID) fetchCart();
-}, [UID]);
+    if (UID) fetchCart();
+  }, [UID]);
 
 
 
@@ -108,10 +109,23 @@ useEffect(() => {
     }
   };
 
-  const clearCart = () => {
-    // Optional: You can add backend support to batch delete
-    setItems([]);
+  const clearCart = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/cart/${UID}`);
+      setItems([]);
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+    }
   };
+
+  const clearCartLocal = async () => {
+    try {
+      setItems([]);
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+    }
+  };
+
 
   const getTotalItems = () => {
     return items.reduce((total, item) => total + item.quantity, 0);
@@ -128,6 +142,7 @@ useEffect(() => {
       removeFromCart,
       updateQuantity,
       clearCart,
+      clearCartLocal,
       getTotalItems,
       getTotalPrice
     }}>
