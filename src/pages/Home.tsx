@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Waves, TreePine, Users, Droplets, ArrowRight, Sparkles } from 'lucide-react';
-import backgroundImage from '../IMG/image.jpg'; // ✅ Update path based on your file structure
+import backgroundImage from '../IMG/banner1.png'; // ✅ Update path based on your file structure
 
 const Home: React.FC = () => {
   const stats = [
@@ -23,7 +23,9 @@ const Home: React.FC = () => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
 
-        <div className="relative px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+        {/* <div className="relative px-4 py-20 sm:px-6 lg:px-8 lg:py-32"> */}
+          <div className="relative px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+
           <div className="mx-auto max-w-4xl text-center">
             <div className="flex justify-center mb-8">
               <div className="p-4 bg-white/20 rounded-full backdrop-blur-sm animate-float">
@@ -70,7 +72,7 @@ const Home: React.FC = () => {
       <section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-decorative font-bold text-saffron-800 mb-4">
+            <h2 className="text-5xl font-decorative font-bold text-saffron-800 mb-4">
               Our Sacred Impact
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -98,7 +100,7 @@ const Home: React.FC = () => {
       <section className="py-16 bg-gradient-to-r from-saffron-50 to-spiritual-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-decorative font-bold text-saffron-800 mb-4">
+            <h2 className="text-5xl font-decorative font-bold text-saffron-800 mb-4">
               Why Choose e-Snan?
             </h2>
           </div>
