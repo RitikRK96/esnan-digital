@@ -22,7 +22,7 @@ const navigationItems = [
   { name: 'Book e-Snan', href: '/book-e-snan', icon: Waves },
   { name: 'My Snan History', href: '/snan-history', icon: History },
   { name: 'Services', href: '/order-products', icon: ShoppingBag },
-    { name: 'Profle', href: '/profile', icon: Phone },
+    { name: 'Profile', href: '/profile', icon: Phone },
 
   { name: 'About e-Snan', href: '/about', icon: Info },
   { name: 'Contact Us', href: '/contact', icon: Phone },
