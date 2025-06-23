@@ -19,7 +19,6 @@ import RefundPolicy from "./pages/Policies/RefundPolicy";
 import TermsAndConditions from "./pages/Policies/TermsAndConditions";
 import BackToTopButton from "./components/BackToTopButton";
 import ScrollToTop from "./components/ScrollToTop";
-import Loader from "./components/Loader"; // ✅ Import loader
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,7 +28,6 @@ function App() {
       <CartProvider>
         <Router>
           <ScrollToTop />
-          <AppWrapper>
             <div className="min-h-screen bg-gradient-to-br from-spiritual-cream to-saffron-50 font-serif">
               <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
               <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -54,34 +52,12 @@ function App() {
               <Footer />
               <BackToTopButton />
             </div>
-          </AppWrapper>
         </Router>
       </CartProvider>
     </AuthProvider>
   );
 }
 
-// ✅ Internal wrapper to track route changes and show loader
-function AppWrapper({ children }) {
-  const location = useLocation();
-  const [loading, setLoading] = useState(true); // 🔁 Start as true
-
-  useEffect(() => {
-    setLoading(true);
-
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 800); // adjust duration as needed
-
-    return () => clearTimeout(timeout);
-  }, [location]);
-
-  if (loading) {
-    return <Loader />; // ✅ Render only loader during initial + route change
-  }
-
-  return children;
-}
 
 
 export default App;
