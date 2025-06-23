@@ -4,7 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import {storage} from '../firebase'
-
+import b1 from '../IMG/b1.webp'
+import b2 from '../IMG/b2.jpeg'
+import b3 from '../IMG/b3.jpeg'
+import b4 from '../IMG/b4.jpeg'
+import b5 from '../IMG/b5.avif'
+import b6 from '../IMG/b6.webp'
 
 
 const BookeSnan: React.FC = () => {
@@ -21,42 +26,42 @@ const BookeSnan: React.FC = () => {
       id: 'prayagraj',
       name: 'Prayagraj Sangam',
       description: 'Sacred confluence of Ganga, Yamuna & Saraswati',
-      image: 'https://images.pexels.com/photos/1007025/pexels-photo-1007025.jpg?auto=compress&cs=tinysrgb&w=600',
-      price: '₹151'
+      image: b1,
+      price: '₹251'
     },
     {
       id: 'haridwar',
       name: 'Haridwar',
       description: 'Gateway to the Gods, Har Ki Pauri',
-      image: 'https://images.pexels.com/photos/3680912/pexels-photo-3680912.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: b2,
       price: '₹121'
     },
     {
       id: 'varanasi',
       name: 'Varanasi',
       description: 'Ancient city of Lord Shiva, Dashashwamedh Ghat',
-      image: 'https://images.pexels.com/photos/1603111/pexels-photo-1603111.jpg?auto=compress&cs=tinysrgb&w=600',
+      image: b3,
       price: '₹131'
     },
     {
       id: 'rishikesh',
       name: 'Rishikesh',
       description: 'Yoga Capital of the World, Triveni Ghat',
-      image: 'https://images.pexels.com/photos/4214159/pexels-photo-4214159.jpeg?auto=compress&cs=tinysrgb&w=600',
+      image: b4,
       price: '₹111'
     },
     {
       id: 'ujjain',
       name: 'Ujjain',
       description: 'Sacred Kshipra River, Mahakaleshwar',
-      image: 'https://images.pexels.com/photos/2166711/pexels-photo-2166711.jpg?auto=compress&cs=tinysrgb&w=600',
+      image: b5,
       price: '₹141'
     },
     {
       id: 'nashik',
       name: 'Nashik',
       description: 'Holy Godavari River, Ramkund',
-      image: 'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpg?auto=compress&cs=tinysrgb&w=600',
+      image: b6,
       price: '₹131'
     }
   ];
