@@ -13,21 +13,51 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onAuthRequired
   const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart();
   const { user } = useAuth();
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!user) {
       onAuthRequired();
       return;
     }
-    
+
     if (items.length === 0) {
       alert('Your cart is empty');
       return;
     }
-    
-    alert(`Order placed successfully! Total: ₹${getTotalPrice()}`);
-    clearCart();
-    onClose();
+
+    try {
+      const order = {
+        items,
+        uid:user.id,
+        total: getTotalPrice(),
+        timestamp: Date.now(),
+        status: "pending", // optional field for tracking
+      };
+
+      const response = await fetch(
+        `https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/orders/${user.id}/add`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(order),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to place order');
+      }
+
+      const data = await response.json();
+      alert(`Order placed successfully! Order ID: ${data.id}`);
+      clearCart();
+      onClose();
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert('Something went wrong while placing your order.');
+    }
   };
+
 
   if (!isOpen) return null;
 
@@ -104,7 +134,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onAuthRequired
                 <span>Total:</span>
                 <span className="text-saffron-600">₹{getTotalPrice()}</span>
               </div>
-              
+
               <div className="space-y-2">
                 <button
                   onClick={handleCheckout}
@@ -112,7 +142,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onAuthRequired
                 >
                   {user ? 'Proceed to Checkout' : 'Login to Checkout'}
                 </button>
-                
+
                 <button
                   onClick={() => clearCart()}
                   className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"

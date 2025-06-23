@@ -14,7 +14,14 @@ import {
   Award,
   Sparkles,
   AlertTriangle,
-} from "lucide-react";
+  CheckCircle,
+  ShoppingBag,
+  Package,
+  Clock,
+  Truck,
+  Eye,
+  Droplets
+} from 'lucide-react';
 import { useAuth } from "../contexts/AuthContext";
 
 interface UserProfile {
@@ -32,14 +39,34 @@ interface UserProfile {
     pincode: string;
   };
 }
+interface OrderItem {
+  category: string;
+  id: string;
+  image: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
 
+interface Order {
+  id: string;
+  items: OrderItem[];
+  status: string;
+  timestamp: number;
+  total: number;
+  uid: string;
+}
 const Profile: React.FC = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
   const [errors, setErrors] = useState<Record<string, string>>({});
+  //Orders
+  const [ordersModalOpen, setOrdersModalOpen] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const editSectionRef = useRef<HTMLDivElement>(null);
 
   const [profileData, setProfileData] = useState<UserProfile>({
@@ -65,7 +92,7 @@ const Profile: React.FC = () => {
     visible: false,
   });
 
-  useEffect(() => {
+    useEffect(() => {
     // Initialize edit data with proper phone number formatting
     const initialData = { ...profileData };
 
@@ -115,6 +142,80 @@ const Profile: React.FC = () => {
     return () => clearTimeout(timer);
   }, [toast.visible]);
 
+
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const response = await fetch(`https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/orders/${profileData.u}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Convert object to array and sort by timestamp (newest first)
+        const ordersArray = Object.values(data).sort(
+          (a: any, b: any) => b.timestamp - a.timestamp
+        ) as Order[];
+
+        setOrders(ordersArray);
+
+      } else {
+        console.error('Failed to fetch orders');
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleOrdersClick = () => {
+    setOrdersModalOpen(true);
+    if (orders.length === 0) {
+      fetchOrders();
+    }
+  };
+
+  const formatOrderDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'text-yellow-700 bg-yellow-100 border-yellow-200';
+      case 'processing':
+        return 'text-blue-700 bg-blue-100 border-blue-200';
+      case 'shipped':
+        return 'text-purple-700 bg-purple-100 border-purple-200';
+      case 'delivered':
+        return 'text-green-700 bg-green-100 border-green-200';
+      case 'cancelled':
+        return 'text-red-700 bg-red-100 border-red-200';
+      default:
+        return 'text-gray-700 bg-gray-100 border-gray-200';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return Clock;
+      case 'processing':
+        return Package;
+      case 'shipped':
+        return Truck;
+      case 'delivered':
+        return CheckCircle;
+      default:
+        return Package;
+    }
+  };
   // utils/api.ts (or similar file)
   const getUserProfile = async (userId: string | undefined): Promise<UserProfile> => {
     if (!userId) throw new Error("User ID is undefined");
@@ -564,7 +665,7 @@ const Profile: React.FC = () => {
                     <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                       <User className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
                     </div>
-                   
+
                   </div>
                   <h2 className="text-lg sm:text-xl font-semibold mb-1">
                     {getDisplayValue(profileData.n, "Add your name")}
@@ -855,7 +956,223 @@ const Profile: React.FC = () => {
               </button>
             </div>
           </div>
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-300 mt-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">My Orders</h3>
+            <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">View order history</p>
+            <button
+              onClick={handleOrdersClick}
+              className="text-purple-600 hover:text-purple-700 font-medium text-xs sm:text-sm"
+            >
+              View Orders
+            </button>
+          </div>
 
+
+          {/* Orders Modal */}
+          {ordersModalOpen && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                  <div className="flex items-center">
+                    <ShoppingBag className="h-6 w-6 text-saffron-600 mr-3" />
+                    <div>
+                      <h2 className="text-2xl font-semibold text-gray-900">My Orders</h2>
+                      <p className="text-gray-600">Track your sacred product orders</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setOrdersModalOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+
+                {/* Modal Content */}
+                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                  {/* Orders Stats */}
+                  {orders.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                        <div className="text-xl font-bold text-yellow-600">
+                          {orders.filter(order => order.status === 'pending').length}
+                        </div>
+                        <div className="text-sm text-yellow-700">Pending</div>
+                      </div>
+                      <div className="bg-blue-50 rounded-lg p-4 text-center">
+                        <div className="text-xl font-bold text-blue-600">
+                          {orders.filter(order => order.status === 'processing').length}
+                        </div>
+                        <div className="text-sm text-blue-700">Processing</div>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-4 text-center">
+                        <div className="text-xl font-bold text-green-600">
+                          {orders.filter(order => order.status === 'delivered').length}
+                        </div>
+                        <div className="text-sm text-green-700">Delivered</div>
+                      </div>
+                      <div className="bg-saffron-50 rounded-lg p-4 text-center">
+                        <div className="text-xl font-bold text-saffron-600">
+                          ₹{orders.reduce((sum, order) => sum + order.total, 0)}
+                        </div>
+                        <div className="text-sm text-saffron-700">Total Spent</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Orders List */}
+                  {ordersLoading ? (
+                    <div className="text-center py-12">
+                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4 animate-pulse" />
+                      <p className="text-gray-600">Loading your orders...</p>
+                    </div>
+                  ) : orders.length === 0 ? (
+                    <div className="text-center py-12">
+                      <ShoppingBag className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h3>
+                      <p className="text-gray-600 mb-6">Start your spiritual journey by ordering sacred products</p>
+                      <a
+                        href="/order-products"
+                        className="inline-flex items-center px-6 py-3 bg-saffron-600 text-white font-semibold rounded-lg hover:bg-saffron-700 transition-colors"
+                        onClick={() => setOrdersModalOpen(false)}
+                      >
+                        <ShoppingBag className="h-5 w-5 mr-2" />
+                        Browse Products
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((order) => {
+                        const StatusIcon = getStatusIcon(order.status);
+
+                        return (
+                          <div key={order.id}  style={{ backgroundColor: 'rgb(254, 252, 232)' }} className="rounded-xl p-6 hover:shadow-lg transition-all duration-300">
+                            {/* Order Header */}
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+                              <div className="flex items-center space-x-4 mb-4 lg:mb-0">
+                                <div className="p-3 bg-saffron-100 rounded-full">
+                                  <Package className="h-6 w-6 text-saffron-600" />
+                                </div>
+                                <div>
+                                  <h3 className="text-lg font-semibold text-gray-900">
+                                    Order #{order.id.slice(-8)}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">
+                                    {formatOrderDate(order.timestamp)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center space-x-4">
+                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(order.status)}`}>
+                                  <StatusIcon className="h-4 w-4 mr-1" />
+                                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                </span>
+                                <div className="text-right">
+                                  <div className="text-xl font-bold text-saffron-600">₹{order.total}</div>
+                                  <div className="text-sm text-gray-600">{order.items.length} items</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Order Items Preview */}
+                            <div className="border-t border-gray-200 pt-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {order.items.slice(0, 3).map((item, index) => (
+                                  <div key={index} className="flex items-center space-x-3 p-3 bg-white rounded-lg">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      className="w-12 h-12 object-cover rounded-lg"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-medium text-gray-900 truncate">
+                                        {item.name}
+                                      </h4>
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-xs text-gray-600">Qty: {item.quantity}</span>
+                                        <span className="text-sm font-semibold text-saffron-600">₹{item.price}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+
+                                {order.items.length > 3 && (
+                                  <div className="flex items-center justify-center p-3 bg-white rounded-lg border-2 border-dashed border-gray-300">
+                                    <span className="text-sm text-gray-600">
+                                      +{order.items.length - 3} more items
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Order Actions */}
+                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 pt-4 border-t border-gray-200">
+                                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3 sm:mb-0">
+                                  <Droplets className="h-4 w-4 text-blue-500" />
+                                  <span>Sacred products blessed by priests</span>
+                                </div>
+
+                                <div className="flex space-x-3">
+                                  <button
+                                    onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                                  >
+                                    <Eye className="h-4 w-4" />
+                                    <span>{selectedOrder?.id === order.id ? 'Hide Details' : 'View Details'}</span>
+                                  </button>
+
+                                  {order.status === 'delivered' && (
+                                    <button className="flex items-center space-x-2 px-4 py-2 bg-saffron-600 text-white rounded-lg hover:bg-saffron-700 transition-colors text-sm">
+                                      <Package className="h-4 w-4" />
+                                      <span>Reorder</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Expanded Order Details */}
+                            {selectedOrder?.id === order.id && (
+                              <div className="mt-6 pt-6 border-t border-gray-200">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-4">Order Details</h4>
+                                <div className="space-y-3">
+                                  {order.items.map((item, index) => (
+                                    <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg">
+                                      <div className="flex items-center space-x-4">
+                                        <img
+                                          src={item.image}
+                                          alt={item.name}
+                                          className="w-16 h-16 object-cover rounded-lg"
+                                        />
+                                        <div>
+                                          <h5 className="font-medium text-gray-900">{item.name}</h5>
+                                          <p className="text-sm text-gray-600">{item.category}</p>
+                                          <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                                        </div>
+                                      </div>
+                                      <div className="text-right">
+                                        <div className="text-lg font-semibold text-saffron-600">₹{item.price}</div>
+                                        <div className="text-sm text-gray-600">₹{item.price * item.quantity} total</div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           {/* Toast Message */}
           {toast.visible && (
             <div
