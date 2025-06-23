@@ -62,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               >
                 <Menu className="h-6 w-6" />
               </button>
-              <h1 className="ml-4 lg:ml-0 text-xl font-decorative font-bold text-saffron-800">
+              <h1 className="ml-4 mt-3 lg:ml-0 text-4xl font-decorative font-bold text-saffron-800">
                 Om Namah Shivaya
               </h1>
             </div>
