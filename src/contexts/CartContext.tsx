@@ -41,8 +41,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const API_BASE_URL = "https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api";
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchCart = async () => {
       try {
