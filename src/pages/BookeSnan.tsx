@@ -4,12 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 import {storage} from '../firebase'
-import b1 from '../IMG/b1.webp'
-import b2 from '../IMG/b2.jpeg'
-import b3 from '../IMG/b3.jpeg'
-import b4 from '../IMG/b4.jpeg'
-import b5 from '../IMG/b5.avif'
-import b6 from '../IMG/b6.webp'
+import b1 from '../../Public/IMG/b1.webp'
+import b2 from '../../Public/IMG/b2.jpeg'
+import b3 from '../../Public/IMG/b3.jpeg'
+import b4 from '../../Public/IMG/b4.jpeg'
+import b5 from '../../Public/IMG/b5.avif'
+import b6 from '../../Public/IMG/b6.webp'
 
 
 const BookeSnan: React.FC = () => {

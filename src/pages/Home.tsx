@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Waves, TreePine, Users, Droplets, ArrowRight, Sparkles } from 'lucide-react';
-import backgroundImage from '../IMG/banner1.png'; // ✅ Update path based on your file structure
+import backgroundImage from '../../Public/IMG/banner1.png'; // ✅ Update path based on your file structure
 
 const Home: React.FC = () => {
   const stats = [
