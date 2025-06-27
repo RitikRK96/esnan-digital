@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-saffron-700">
+          <div className="flex h-16 items-center justify-between p-6 border-b border-saffron-700">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-spiritual-gold rounded-full animate-glow">
                 <Sparkles className="h-6 w-6 text-saffron-800" />
