@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Heart, X } from 'lucide-react';
 
 const Contact: React.FC = () => {
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error"; visible: boolean }>({
+    message: "",
+    type: "success",
+    visible: false,
+  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,11 +15,45 @@ const Contact: React.FC = () => {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert('Thank you for reaching out! We will get back to you within 24 hours.');
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (toast.visible) {
+      timer = setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [toast.visible]);
+
+  const handleCloseToast = () => {
+    setToast((prev) => ({ ...prev, visible: false }));
   };
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        setToast({ message: "Failed to submit contact form", type: "error", visible: true });
+
+      }
+
+
+      setToast({ message: "Thank you for reaching out! We will get back to you within 24 hours.", type: "success", visible: true });
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      alert("Something went wrong. Please try again later.");
+    }
+  };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -82,10 +121,28 @@ const Contact: React.FC = () => {
             Connect with Our Sacred Community
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Have questions about e-Snan? Need spiritual guidance? Our dedicated team is here to assist you 
+            Have questions about e-Snan? Need spiritual guidance? Our dedicated team is here to assist you
             on your divine journey.
           </p>
         </div>
+        {toast.visible && (
+          <div
+            style={{ zIndex: 999 }}
+            className={`fixed top-24 right-4 p-4 rounded-lg shadow-lg ${toast.type === "success" ? "bg-green-500" : "bg-red-500"
+              } text-white flex items-center justify-between max-w-xs transform transition-all duration-300 ease-in-out ${toast.visible
+                ? "translate-x-0 opacity-100 scale-100"
+                : "translate-x-[100%] opacity-0 scale-95"
+              }`}
+          >
+            <span>{toast.message}</span>
+            <button
+              onClick={handleCloseToast}
+              className="ml-4 text-white hover:text-gray-200 transition-colors duration-200"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        )}
 
         {/* Contact Info Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -115,7 +172,7 @@ const Contact: React.FC = () => {
                 <p className="text-gray-600">We'd love to hear from you</p>
               </div>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -149,7 +206,7 @@ const Contact: React.FC = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
@@ -162,8 +219,11 @@ const Contact: React.FC = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
-                    placeholder="+91 98765 43210"
+                    placeholder="98765 43210 or +91 98765 43210"
+                    pattern="^(\+91\s?)?[6-9]\d{4}\s?\d{5}$"
+                    maxLength={16}
                   />
+
                 </div>
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
@@ -172,6 +232,8 @@ const Contact: React.FC = () => {
                   <select
                     id="subject"
                     name="subject"
+                    required
+
                     value={formData.subject}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
@@ -186,7 +248,7 @@ const Contact: React.FC = () => {
                   </select>
                 </div>
               </div>
-              
+
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                   Message *
@@ -202,7 +264,7 @@ const Contact: React.FC = () => {
                   placeholder="Tell us how we can help you..."
                 ></textarea>
               </div>
-              
+
               <button
                 type="submit"
                 className="w-full bg-saffron-600 text-white py-3 px-6 rounded-lg hover:bg-saffron-700 transition-colors font-semibold flex items-center justify-center transform hover:scale-105 duration-200"
@@ -226,7 +288,7 @@ const Contact: React.FC = () => {
                 </div>
               </div>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Our team of spiritual advisors and technical experts are dedicated to ensuring your 
+                Our team of spiritual advisors and technical experts are dedicated to ensuring your
                 e-Snan experience is both authentic and meaningful.
               </p>
               <div className="bg-white/70 rounded-lg p-4 border-l-4 border-saffron-600">
