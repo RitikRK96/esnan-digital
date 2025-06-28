@@ -63,7 +63,7 @@ const SnakeHistory: React.FC = () => {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-decorative font-bold text-saffron-800 mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-5xl font-decorative font-bold text-saffron-800 mb-2 sm:mb-4">
             My Sacred e-Snan History
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">

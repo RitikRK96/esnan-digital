@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import BookeSnan from "./pages/BookeSnan";
 import SnakHistory from "./pages/SnanHistory";
-import OrderProducts from "./pages/OrderProducts";
+import OrderProducts from "./pages/Services";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";

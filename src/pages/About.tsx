@@ -37,7 +37,7 @@ const About: React.FC = () => {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-decorative font-bold text-saffron-800 mb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-5xl font-decorative font-bold text-saffron-800 mb-2 sm:mb-4">
             About e-Snan: Digital Devotion for a Sacred Future
           </h1>
           <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">

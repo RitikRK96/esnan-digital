@@ -12,7 +12,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const { user, logout } = useAuth();
-  const { getTotalItems,clearCartLocal } = useCart();
+  const { getTotalItems, clearCartLocal } = useCart();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -62,9 +62,10 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen }) => {
               >
                 <Menu className="h-6 w-6" />
               </button>
-              <h1 className="ml-4 mt-3 lg:ml-0 text-4xl font-decorative font-bold text-saffron-800">
+              <h1 className="ml-4 mt-3 lg:ml-0 text-2xl sm:text-2xl md:text-3xl lg:text-4xl font-decorative font-bold text-saffron-800">
                 Om Namah Shivaya
               </h1>
+
             </div>
 
             <div className="flex items-center space-x-4">
