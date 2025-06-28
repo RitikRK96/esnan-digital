@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: data.name, // Or retrieve from Firebase DB using the token
       };
 
+      sessionStorage.clear();
       setUser(userData);
       localStorage.setItem('e-snan-user', JSON.stringify(userData));
       setIsLoading(false);
@@ -86,6 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
 
       setUser(userData);
+      sessionStorage.clear();
       localStorage.setItem('e-snan-user', JSON.stringify(userData));
       setIsLoading(false);
       return true;
@@ -99,6 +101,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('e-snan-user');
+    sessionStorage.clear();
+
   };
 
   return (

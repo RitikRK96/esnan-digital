@@ -36,13 +36,24 @@ const SnakeHistory: React.FC = () => {
 
   useEffect(() => {
     const fetchSnanHistory = async () => {
+      const storageKey = `snanHistory_${user?.id}`;
+      const cachedData = sessionStorage.getItem(storageKey);
+
       try {
-        const response = await fetch(
-          `https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/snan/${user.id}`
-        );
-        const data = await response.json();
-        const parsedData = Object.values(data || {});
-        setSnanHistory(parsedData);
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          setSnanHistory(parsedData);
+        } else {
+          const response = await fetch(
+            `https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/snan/${user.id}`
+          );
+          if (!response.ok) throw new Error('Failed to fetch snan history');
+
+          const data = await response.json();
+          const parsedData = Object.values(data || {});
+          sessionStorage.setItem(storageKey, JSON.stringify(parsedData));
+          setSnanHistory(parsedData);
+        }
       } catch (error) {
         console.error('Error fetching snan history:', error);
       } finally {
@@ -56,6 +67,7 @@ const SnakeHistory: React.FC = () => {
       setLoading(false);
     }
   }, [user]);
+
 
 
   return (

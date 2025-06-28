@@ -92,7 +92,7 @@ const Profile: React.FC = () => {
     visible: false,
   });
 
-    useEffect(() => {
+  useEffect(() => {
     // Initialize edit data with proper phone number formatting
     const initialData = { ...profileData };
 
@@ -116,18 +116,7 @@ const Profile: React.FC = () => {
   }, [profileData]);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        const profile = await getUserProfile(user?.id); // Make sure this function is defined/imported
-        setProfileData(profile);
-        setEditData(profile);
-      } catch (error) {
-        setToast({ message: "Failed to load profile.", type: "error", visible: true });
-      } finally {
-        setLoading(false);
-      }
-    };
+
 
     if (user?.id) {
       fetchProfile();
@@ -144,27 +133,47 @@ const Profile: React.FC = () => {
 
 
   const fetchOrders = async () => {
+    const storageKey = `orders_${profileData.u}`;
+    const cachedData = sessionStorage.getItem(storageKey);
+
     setOrdersLoading(true);
+
     try {
-      const response = await fetch(`https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/orders/${profileData.u}`);
-      if (response.ok) {
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData) as Order[];
+        setOrders(parsedData);
+      } else {
+        const response = await fetch(`https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/orders/${profileData.u}`);
+        if (!response.ok) throw new Error('Failed to fetch orders');
+
         const data = await response.json();
+
         // Convert object to array and sort by timestamp (newest first)
         const ordersArray = Object.values(data).sort(
           (a: any, b: any) => b.timestamp - a.timestamp
         ) as Order[];
 
+        sessionStorage.setItem(storageKey, JSON.stringify(ordersArray));
         setOrders(ordersArray);
-
-      } else {
-        console.error('Failed to fetch orders');
-        setOrders([]);
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
       setOrders([]);
     } finally {
       setOrdersLoading(false);
+    }
+  };
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const profile = await getUserProfile(user?.id); // Make sure this function is defined/imported
+      setProfileData(profile);
+      setEditData(profile);
+    } catch (error) {
+      setToast({ message: "Failed to load profile.", type: "error", visible: true });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -220,6 +229,13 @@ const Profile: React.FC = () => {
   const getUserProfile = async (userId: string | undefined): Promise<UserProfile> => {
     if (!userId) throw new Error("User ID is undefined");
 
+    const storageKey = `userProfile_${userId}`;
+    const cachedData = sessionStorage.getItem(storageKey);
+
+    if (cachedData) {
+      return JSON.parse(cachedData) as UserProfile;
+    }
+
     try {
       const response = await fetch(`https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/profile/${userId}`);
 
@@ -227,12 +243,15 @@ const Profile: React.FC = () => {
         throw new Error("Failed to fetch profile");
       }
 
-      return await response.json();
+      const userProfile = await response.json();
+      sessionStorage.setItem(storageKey, JSON.stringify(userProfile)); // Store in sessionStorage
+      return userProfile;
     } catch (error) {
       setToast({ message: "Failed to fetch user profile.", type: "error", visible: true });
-      throw error; // Rethrow if you want the calling code to also handle it
+      throw error;
     }
   };
+
 
 
   const isUnavailable = (value: string) => {
@@ -469,6 +488,8 @@ const Profile: React.FC = () => {
         setIsEditing(false);
       }
 
+      sessionStorage.removeItem(`userProfile_${uid}`);
+      fetchProfile()
       setToast({ message: "Profile updated successfully.", type: "success", visible: true });
       console.log("Profile updated successfully.");
       // Optionally update local profileData here if needed
@@ -708,6 +729,20 @@ const Profile: React.FC = () => {
                   </div>
                 </div>
 
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-300 mt-4">
+                {/* Order Details */}
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">My Orders</h3>
+                <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">View order history</p>
+                <button
+                  onClick={handleOrdersClick}
+                  className="text-purple-600 hover:text-purple-700 font-medium text-xs sm:text-sm"
+                >
+                  View Orders
+                </button>
               </div>
             </div>
 
@@ -956,19 +991,7 @@ const Profile: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-300 mt-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
-              <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">My Orders</h3>
-            <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">View order history</p>
-            <button
-              onClick={handleOrdersClick}
-              className="text-purple-600 hover:text-purple-700 font-medium text-xs sm:text-sm"
-            >
-              View Orders
-            </button>
-          </div>
+
 
 
           {/* Orders Modal */}
@@ -1050,7 +1073,7 @@ const Profile: React.FC = () => {
                         const StatusIcon = getStatusIcon(order.status);
 
                         return (
-                          <div key={order.id}  style={{ backgroundColor: 'rgb(254, 252, 232)' }} className="rounded-xl p-6 hover:shadow-lg transition-all duration-300">
+                          <div key={order.id} style={{ backgroundColor: 'rgb(254, 252, 232)' }} className="rounded-xl p-6 hover:shadow-lg transition-all duration-300">
                             {/* Order Header */}
                             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
                               <div className="flex items-center space-x-4 mb-4 lg:mb-0">

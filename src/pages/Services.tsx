@@ -24,11 +24,22 @@ const OrderProducts: React.FC = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      const storageKey = 'productsData';
+      const cachedData = sessionStorage.getItem(storageKey);
+
       try {
         setLoading(true); // Start loading
-        const response = await fetch('https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/products');
-        const data = await response.json();
-        setProducts(data);
+
+        if (cachedData) {
+          setProducts(JSON.parse(cachedData));
+        } else {
+          const response = await fetch('https://us-central1-esnan-digital-10a7b.cloudfunctions.net/api/products');
+          if (!response.ok) throw new Error('Failed to fetch products');
+
+          const data = await response.json();
+          sessionStorage.setItem(storageKey, JSON.stringify(data));
+          setProducts(data);
+        }
       } catch (error) {
         console.error('Failed to fetch products:', error);
       } finally {
@@ -40,15 +51,16 @@ const OrderProducts: React.FC = () => {
   }, []);
 
 
+
   const isInCart = (productId: string) => {
     return items.some(item => item.id === productId);
   };
 
   const handleAddToCart = async (product: any) => {
     if (!user || !user.id) return;
-    const userId =user.id; // Replace with actual user ID from auth context or state
+    const userId = user.id; // Replace with actual user ID from auth context or state
 
-   
+
     const cartItem = {
       id: product.id,
       name: product.name,
@@ -57,8 +69,8 @@ const OrderProducts: React.FC = () => {
       category: product.category
     };
 
-    
-     addToCart(cartItem);
+
+    addToCart(cartItem);
   };
 
 
@@ -174,7 +186,7 @@ const OrderProducts: React.FC = () => {
 
                       <button
                         onClick={() => handleAddToCart(product)}
-                        disabled={isInCart(product.id)||!user}
+                        disabled={isInCart(product.id) || !user}
                         className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 ${isInCart(product.id)
                           ? 'bg-green-100 text-green-700 cursor-not-allowed'
                           : 'bg-saffron-600 text-white hover:bg-saffron-700 shadow-lg hover:shadow-xl'

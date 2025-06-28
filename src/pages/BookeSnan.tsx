@@ -103,7 +103,7 @@ const BookeSnan: React.FC = () => {
 
       
       const photoRef = ref(storage, `snan_photos/${user.id}_${Date.now()}`);
-      const snapshot = await uploadBytes(photoRef, photo);
+      const snapshot = await uploadBytes(photoRef,photo);
       const downloadURL = await getDownloadURL(snapshot.ref);
 
       // === 2. Submit booking to backend ===
@@ -134,6 +134,8 @@ const BookeSnan: React.FC = () => {
 
       // === 3. Success message ===
 
+
+      sessionStorage.removeItem(`snanHistory_${user.id}`);
 
       alert(`Booking Confirmed!\n\nDear ${user.name},\n\nYour e-Snan has been booked successfully:\n\nLocation: ${selectedCityData?.name}\nPhoto Package: ${addPhoto ? 'Yes (+₹100)' : 'No'}\nHoly Water: ${addHolyWater ? 'Yes (+₹300)' : 'No'}\nTotal Amount: ₹${totalAmount}\n\nYou will receive updates via email at ${user.email}`);
 

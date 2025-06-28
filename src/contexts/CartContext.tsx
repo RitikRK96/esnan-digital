@@ -43,11 +43,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const fetchCart = async () => {
+      const storageKey = `cart_${UID}`;
+      const cachedData = sessionStorage.getItem(storageKey);
+
       try {
-        const response = await axios.get(`${API_BASE_URL}/cart/${UID}`);
-        const data = response.data || {};
-        const fetchedItems = Object.values(data) as CartItem[];
-        setItems(fetchedItems);
+        if (cachedData) {
+          const parsedItems = JSON.parse(cachedData) as CartItem[];
+          setItems(parsedItems);
+        } else {
+          const response = await axios.get(`${API_BASE_URL}/cart/${UID}`);
+          if (response.status !== 200) throw new Error("Failed to fetch cart");
+
+          const data = response.data || {};
+          const fetchedItems = Object.values(data) as CartItem[];
+
+          sessionStorage.setItem(storageKey, JSON.stringify(fetchedItems));
+          setItems(fetchedItems);
+        }
       } catch (error) {
         console.error("Failed to fetch cart:", error);
       }
@@ -55,6 +67,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (UID) fetchCart();
   }, [UID]);
+
 
 
 
@@ -66,6 +79,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       await axios.post(`${API_BASE_URL}/cart/${UID}/add`, updatedItem);
+      sessionStorage.removeItem(`cart_${UID}`);
+
       setItems(prev =>
         existingItem
           ? prev.map(item =>
@@ -81,6 +96,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const removeFromCart = async (productId: string) => {
     try {
       await axios.delete(`${API_BASE_URL}/cart/${UID}/${productId}`);
+      sessionStorage.removeItem(`cart_${UID}`);
+
       setItems(prev => prev.filter(item => item.id !== productId));
     } catch (error) {
       console.error("Failed to remove from cart:", error);
@@ -93,12 +110,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    sessionStorage.removeItem(`cart_${UID}`);
+
     const item = items.find(i => i.id === productId);
     if (!item) return;
 
     const updatedItem = { ...item, quantity };
     try {
       await axios.post(`${API_BASE_URL}/cart/${UID}/add`, updatedItem);
+
       setItems(prev =>
         prev.map(item => item.id === productId ? updatedItem : item)
       );
@@ -110,6 +130,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const clearCart = async () => {
     try {
       await axios.delete(`${API_BASE_URL}/cart/${UID}`);
+      sessionStorage.removeItem(`cart_${UID}`);
       setItems([]);
     } catch (error) {
       console.error("Failed to clear cart:", error);
@@ -118,6 +139,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCartLocal = async () => {
     try {
+      //have to add the api to clear the cart
+      sessionStorage.removeItem(`cart_${UID}`);
       setItems([]);
     } catch (error) {
       console.error("Failed to clear cart:", error);

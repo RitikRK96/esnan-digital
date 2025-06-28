@@ -49,6 +49,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, onAuthRequired
       }
 
       const data = await response.json();
+      sessionStorage.removeItem(`orders_${user.id}`);
       alert(`Order placed successfully! Order ID: ${data.id}`);
       clearCart();
       onClose();
